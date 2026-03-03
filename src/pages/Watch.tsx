@@ -1,10 +1,14 @@
 import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import SocialChat from "@/components/SocialChat";
 import ContentRow from "@/components/ContentRow";
 import { contentLibrary } from "@/lib/content-data";
+import { supabase } from "@/integrations/supabase/client";
+import { useWatchlist } from "@/hooks/useWatchlist";
+import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
-import { Play, Star, Clock, Calendar, Sparkles, Users, ThumbsUp, Share2, Plus, Monitor, Smartphone, Tv } from "lucide-react";
+import { Play, Star, Clock, Calendar, Sparkles, Users, ThumbsUp, Share2, Plus, Check, Monitor, Smartphone, Tv } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import nexusImg from "@/assets/nexus-chronicles.jpg";
@@ -27,6 +31,22 @@ const imageMap: Record<string, string> = {
 const Watch = () => {
   const { id } = useParams();
   const content = contentLibrary.find((c) => c.id === id) || contentLibrary[0];
+  const [dbContentId, setDbContentId] = useState<string | undefined>();
+  const { user } = useAuth();
+  const { isInWatchlist, toggle: toggleWatchlist, loading: watchlistLoading } = useWatchlist(dbContentId);
+
+  // Fetch the DB content UUID by slug
+  useEffect(() => {
+    const fetchContentId = async () => {
+      const { data } = await supabase
+        .from("content")
+        .select("id")
+        .eq("slug", id || "")
+        .single();
+      if (data) setDbContentId(data.id);
+    };
+    fetchContentId();
+  }, [id]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -51,7 +71,6 @@ const Watch = () => {
             </motion.button>
           </div>
 
-          {/* Live indicator */}
           {content.viewers && (
             <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-full glass">
               <span className="h-2 w-2 rounded-full bg-destructive animate-pulse" />
@@ -74,10 +93,7 @@ const Watch = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <h1 className="font-display text-2xl md:text-4xl font-bold text-foreground mb-3">
                 {content.title}
               </h1>
@@ -108,7 +124,15 @@ const Watch = () => {
                   Resume Watching
                 </Button>
                 <Button variant="ghost-glow" size="icon"><ThumbsUp className="h-4 w-4" /></Button>
-                <Button variant="ghost-glow" size="icon"><Plus className="h-4 w-4" /></Button>
+                <Button
+                  variant="ghost-glow"
+                  size="icon"
+                  onClick={toggleWatchlist}
+                  disabled={watchlistLoading}
+                  className={isInWatchlist ? "text-primary" : ""}
+                >
+                  {isInWatchlist ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                </Button>
                 <Button variant="ghost-glow" size="icon"><Share2 className="h-4 w-4" /></Button>
               </div>
             </motion.div>
@@ -153,7 +177,7 @@ const Watch = () => {
                 <Users className="h-5 w-5 text-primary" />
                 <h3 className="font-display font-semibold text-foreground">Watch Party</h3>
               </div>
-              <SocialChat />
+              <SocialChat contentId={dbContentId} />
             </motion.div>
           </div>
         </div>
