@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Search, Bell, User, Menu, X } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Search, Bell, User, Menu, X, LogOut, LogIn } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navLinks = [
   { path: "/", label: "Home" },
@@ -11,7 +12,14 @@ const navLinks = [
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <motion.nav
@@ -50,9 +58,20 @@ const Navbar = () => {
             <Bell className="h-5 w-5" />
             <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary animate-pulse-glow" />
           </button>
-          <button className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
-            <User className="h-5 w-5" />
-          </button>
+          {user ? (
+            <>
+              <Link to="/profile" className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
+                <User className="h-5 w-5" />
+              </Link>
+              <button onClick={handleSignOut} className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
+                <LogOut className="h-5 w-5" />
+              </button>
+            </>
+          ) : (
+            <Link to="/auth" className="p-2 rounded-lg hover:bg-secondary transition-colors text-primary hover:text-primary">
+              <LogIn className="h-5 w-5" />
+            </Link>
+          )}
           <button className="md:hidden p-2" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -82,6 +101,11 @@ const Navbar = () => {
                   {link.label}
                 </Link>
               ))}
+              {!user && (
+                <Link to="/auth" onClick={() => setMobileOpen(false)} className="text-sm font-medium py-2 px-3 rounded-lg text-primary">
+                  Sign In
+                </Link>
+              )}
             </div>
           </motion.div>
         )}
