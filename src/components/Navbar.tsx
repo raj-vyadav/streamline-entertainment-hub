@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, Bell, User, Menu, X, LogOut, LogIn } from "lucide-react";
+import { Search, Bell, User, Menu, X, LogOut, LogIn, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAdmin } from "@/hooks/useAdmin";
 
 const navLinks = [
   { path: "/", label: "Home" },
@@ -15,6 +16,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const { isAdmin } = useAdmin();
 
   const handleSignOut = async () => {
     await signOut();
@@ -59,7 +61,12 @@ const Navbar = () => {
             <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary animate-pulse-glow" />
           </button>
           {user ? (
-            <>
+             <>
+              {isAdmin && (
+                <Link to="/admin" className="p-2 rounded-lg hover:bg-secondary transition-colors text-primary hover:text-primary" title="Admin Panel">
+                  <Shield className="h-5 w-5" />
+                </Link>
+              )}
               <Link to="/profile" className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
                 <User className="h-5 w-5" />
               </Link>
