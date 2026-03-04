@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Plus,
   Pencil,
@@ -41,8 +42,10 @@ import {
   Search,
   Video,
   Loader2,
+  Users,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import UserRoleManager from "@/components/admin/UserRoleManager";
 
 interface ContentItem {
   id: string;
@@ -90,6 +93,7 @@ const Admin = () => {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState("");
+  const [activeTab, setActiveTab] = useState("content");
 
   useEffect(() => {
     if (!authLoading && !adminLoading) {
@@ -247,18 +251,30 @@ const Admin = () => {
             </Button>
             <div>
               <h1 className="text-xl font-bold font-display">Admin Panel</h1>
-              <p className="text-sm text-muted-foreground">Manage your content library</p>
+              <p className="text-sm text-muted-foreground">Manage your platform</p>
             </div>
           </div>
-          <Button onClick={openCreate} className="gap-2">
-            <Plus className="h-4 w-4" />
-            Add Content
-          </Button>
+          {activeTab === "content" && (
+            <Button onClick={openCreate} className="gap-2">
+              <Plus className="h-4 w-4" />
+              Add Content
+            </Button>
+          )}
         </div>
       </header>
 
-      {/* Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="content" className="gap-2">
+              <Film className="h-4 w-4" /> Content
+            </TabsTrigger>
+            <TabsTrigger value="users" className="gap-2">
+              <Users className="h-4 w-4" /> Users & Roles
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="content">
         {/* Search */}
         <div className="relative mb-6 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -357,6 +373,12 @@ const Admin = () => {
             </Table>
           </div>
         )}
+          </TabsContent>
+
+          <TabsContent value="users">
+            <UserRoleManager />
+          </TabsContent>
+        </Tabs>
       </main>
 
       {/* Create/Edit Dialog */}
