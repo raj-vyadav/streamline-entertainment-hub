@@ -46,6 +46,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import UserRoleManager from "@/components/admin/UserRoleManager";
+import FileUpload from "@/components/admin/FileUpload";
 
 interface ContentItem {
   id: string;
@@ -493,23 +494,23 @@ const Admin = () => {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm text-muted-foreground">Image URL / Asset name</label>
-              <Input
-                value={form.image}
-                onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))}
-                placeholder="https://... or asset-name"
-              />
-            </div>
+            <FileUpload
+              value={form.image}
+              onChange={(url) => setForm((f) => ({ ...f, image: url }))}
+              accept="image/*"
+              label="Thumbnail Image"
+              folder="thumbnails"
+              icon="image"
+            />
 
-            <div className="space-y-2">
-              <label className="text-sm text-muted-foreground">Video URL</label>
-              <Input
-                value={form.video_url}
-                onChange={(e) => setForm((f) => ({ ...f, video_url: e.target.value }))}
-                placeholder="https://video-host.com/video.mp4"
-              />
-            </div>
+            <FileUpload
+              value={form.video_url}
+              onChange={(url) => setForm((f) => ({ ...f, video_url: url }))}
+              accept="video/*"
+              label="Video File"
+              folder="videos"
+              icon="video"
+            />
 
             <div className="space-y-2">
               <label className="text-sm text-muted-foreground">Tags (comma-separated)</label>
