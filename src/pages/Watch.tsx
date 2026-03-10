@@ -32,20 +32,26 @@ const Watch = () => {
   const { id } = useParams();
   const content = contentLibrary.find((c) => c.id === id) || contentLibrary[0];
   const [dbContentId, setDbContentId] = useState<string | undefined>();
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   const { user } = useAuth();
   const { isInWatchlist, toggle: toggleWatchlist, loading: watchlistLoading } = useWatchlist(dbContentId);
 
-  // Fetch the DB content UUID by slug
+  // Fetch the DB content UUID and video_url by slug
   useEffect(() => {
     const fetchContentId = async () => {
       const { data } = await supabase
         .from("content")
-        .select("id")
+        .select("id, video_url")
         .eq("slug", id || "")
         .single();
-      if (data) setDbContentId(data.id);
+      if (data) {
+        setDbContentId(data.id);
+        setVideoUrl(data.video_url);
+      }
     };
     fetchContentId();
+    setIsPlaying(false);
   }, [id]);
 
   return (
