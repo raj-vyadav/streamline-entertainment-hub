@@ -61,36 +61,54 @@ const Watch = () => {
       {/* Video Player Area */}
       <div className="pt-16">
         <div className="relative aspect-video max-h-[70vh] w-full overflow-hidden bg-card">
-          <img
-            src={featuredBanner}
-            alt={content.title}
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-background/40 flex items-center justify-center">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="h-20 w-20 rounded-full bg-primary/90 flex items-center justify-center shadow-lg"
-              style={{ boxShadow: "var(--shadow-glow-strong)" }}
-            >
-              <Play className="h-8 w-8 text-primary-foreground ml-1" fill="currentColor" />
-            </motion.button>
-          </div>
+          {isPlaying && videoUrl ? (
+            <video
+              src={videoUrl}
+              controls
+              autoPlay
+              className="h-full w-full object-contain bg-black"
+            />
+          ) : (
+            <>
+              <img
+                src={imageMap[content.image] || featuredBanner}
+                alt={content.title}
+                className="h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-background/40 flex items-center justify-center">
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    if (videoUrl) {
+                      setIsPlaying(true);
+                    } else {
+                      alert("No video available for this content.");
+                    }
+                  }}
+                  className="h-20 w-20 rounded-full bg-primary/90 flex items-center justify-center shadow-lg cursor-pointer"
+                  style={{ boxShadow: "var(--shadow-glow-strong)" }}
+                >
+                  <Play className="h-8 w-8 text-primary-foreground ml-1" fill="currentColor" />
+                </motion.button>
+              </div>
 
-          {content.viewers && (
-            <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-full glass">
-              <span className="h-2 w-2 rounded-full bg-destructive animate-pulse" />
-              <span className="text-xs font-medium text-foreground">
-                {content.viewers.toLocaleString()} watching
-              </span>
-            </div>
-          )}
+              {content.viewers && (
+                <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-full glass">
+                  <span className="h-2 w-2 rounded-full bg-destructive animate-pulse" />
+                  <span className="text-xs font-medium text-foreground">
+                    {content.viewers.toLocaleString()} watching
+                  </span>
+                </div>
+              )}
 
-          {content.isAIPowered && (
-            <div className="absolute top-4 left-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/90">
-              <Sparkles className="h-3.5 w-3.5 text-primary-foreground" />
-              <span className="text-xs font-semibold text-primary-foreground">AI-Powered Story</span>
-            </div>
+              {content.isAIPowered && (
+                <div className="absolute top-4 left-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/90">
+                  <Sparkles className="h-3.5 w-3.5 text-primary-foreground" />
+                  <span className="text-xs font-semibold text-primary-foreground">AI-Powered Story</span>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
