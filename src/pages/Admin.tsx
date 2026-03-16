@@ -96,6 +96,7 @@ const Admin = () => {
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("content");
+  const [generatingSynopsis, setGeneratingSynopsis] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !adminLoading) {
