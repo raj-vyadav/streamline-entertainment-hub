@@ -384,6 +384,10 @@ const Admin = () => {
           <TabsContent value="users">
             <UserRoleManager />
           </TabsContent>
+
+          <TabsContent value="parties">
+            <WatchPartyManager />
+          </TabsContent>
         </Tabs>
       </main>
 
