@@ -47,6 +47,7 @@ import {
 import { motion } from "framer-motion";
 import UserRoleManager from "@/components/admin/UserRoleManager";
 import FileUpload from "@/components/admin/FileUpload";
+import WatchPartyManager from "@/components/admin/WatchPartyManager";
 
 interface ContentItem {
   id: string;
