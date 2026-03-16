@@ -206,6 +206,9 @@ const Watch = () => {
                 <h3 className="font-display font-semibold text-foreground">Watch Party</h3>
               </div>
               <SocialChat contentId={dbContentId} />
+              <div className="mt-6">
+                <WatchPartySchedule />
+              </div>
             </motion.div>
           </div>
         </div>
