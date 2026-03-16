@@ -8,7 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useWatchlist } from "@/hooks/useWatchlist";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
-import { Play, Star, Clock, Calendar, Sparkles, Users, ThumbsUp, Share2, Plus, Check, Monitor, Smartphone, Tv } from "lucide-react";
+import { Play, Star, Clock, Calendar, Sparkles, Users, Share2, Plus, Check, Monitor, Smartphone, Tv } from "lucide-react";
+import ContentRating from "@/components/ContentRating";
+import WatchPartySchedule from "@/components/WatchPartySchedule";
 import { Button } from "@/components/ui/button";
 
 import nexusImg from "@/assets/nexus-chronicles.jpg";
@@ -147,7 +149,6 @@ const Watch = () => {
                   <Play className="h-4 w-4 mr-2" fill="currentColor" />
                   Resume Watching
                 </Button>
-                <Button variant="ghost-glow" size="icon"><ThumbsUp className="h-4 w-4" /></Button>
                 <Button
                   variant="ghost-glow"
                   size="icon"
@@ -160,6 +161,9 @@ const Watch = () => {
                 <Button variant="ghost-glow" size="icon"><Share2 className="h-4 w-4" /></Button>
               </div>
             </motion.div>
+
+            {/* Ratings & Reviews */}
+            <ContentRating contentId={dbContentId} />
 
             {/* Cross-Device */}
             <motion.div
@@ -202,6 +206,9 @@ const Watch = () => {
                 <h3 className="font-display font-semibold text-foreground">Watch Party</h3>
               </div>
               <SocialChat contentId={dbContentId} />
+              <div className="mt-6">
+                <WatchPartySchedule />
+              </div>
             </motion.div>
           </div>
         </div>

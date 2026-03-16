@@ -180,6 +180,44 @@ export type Database = {
         }
         Relationships: []
       }
+      watch_parties: {
+        Row: {
+          content_id: string
+          created_at: string
+          created_by: string
+          id: string
+          scheduled_at: string
+          status: string
+          title: string
+        }
+        Insert: {
+          content_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          scheduled_at: string
+          status?: string
+          title: string
+        }
+        Update: {
+          content_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          scheduled_at?: string
+          status?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "watch_parties_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "content"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       watchlist: {
         Row: {
           content_id: string

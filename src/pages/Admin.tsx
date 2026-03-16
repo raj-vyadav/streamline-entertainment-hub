@@ -47,6 +47,7 @@ import {
 import { motion } from "framer-motion";
 import UserRoleManager from "@/components/admin/UserRoleManager";
 import FileUpload from "@/components/admin/FileUpload";
+import WatchPartyManager from "@/components/admin/WatchPartyManager";
 
 interface ContentItem {
   id: string;
@@ -95,6 +96,7 @@ const Admin = () => {
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("content");
+  const [generatingSynopsis, setGeneratingSynopsis] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !adminLoading) {
@@ -273,6 +275,9 @@ const Admin = () => {
             <TabsTrigger value="users" className="gap-2">
               <Users className="h-4 w-4" /> Users & Roles
             </TabsTrigger>
+            <TabsTrigger value="parties" className="gap-2">
+              <Tv className="h-4 w-4" /> Watch Parties
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="content">
@@ -379,6 +384,10 @@ const Admin = () => {
           <TabsContent value="users">
             <UserRoleManager />
           </TabsContent>
+
+          <TabsContent value="parties">
+            <WatchPartyManager />
+          </TabsContent>
         </Tabs>
       </main>
 
@@ -417,7 +426,37 @@ const Admin = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm text-muted-foreground">Description</label>
+              <div className="flex items-center justify-between">
+                <label className="text-sm text-muted-foreground">Description</label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={generatingSynopsis || !form.title.trim()}
+                  onClick={async () => {
+                    setGeneratingSynopsis(true);
+                    try {
+                      const { data, error } = await supabase.functions.invoke("generate-synopsis", {
+                        body: { title: form.title, genre: form.genre, type: form.type, year: form.year, tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean) },
+                      });
+                      if (error) throw error;
+                      if (data?.synopsis) {
+                        setForm((f) => ({ ...f, description: data.synopsis }));
+                        toast.success("AI synopsis generated!");
+                      } else if (data?.error) {
+                        toast.error(data.error);
+                      }
+                    } catch (e: any) {
+                      toast.error(e.message || "Failed to generate synopsis");
+                    }
+                    setGeneratingSynopsis(false);
+                  }}
+                  className="gap-1.5 text-xs"
+                >
+                  {generatingSynopsis ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                  AI Generate
+                </Button>
+              </div>
               <Textarea
                 value={form.description}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
