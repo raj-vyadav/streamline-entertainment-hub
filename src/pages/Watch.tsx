@@ -149,7 +149,6 @@ const Watch = () => {
                   <Play className="h-4 w-4 mr-2" fill="currentColor" />
                   Resume Watching
                 </Button>
-                <Button variant="ghost-glow" size="icon"><ThumbsUp className="h-4 w-4" /></Button>
                 <Button
                   variant="ghost-glow"
                   size="icon"
