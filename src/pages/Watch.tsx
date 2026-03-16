@@ -162,6 +162,9 @@ const Watch = () => {
               </div>
             </motion.div>
 
+            {/* Ratings & Reviews */}
+            <ContentRating contentId={dbContentId} />
+
             {/* Cross-Device */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
