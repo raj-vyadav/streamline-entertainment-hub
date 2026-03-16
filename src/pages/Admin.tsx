@@ -275,6 +275,9 @@ const Admin = () => {
             <TabsTrigger value="users" className="gap-2">
               <Users className="h-4 w-4" /> Users & Roles
             </TabsTrigger>
+            <TabsTrigger value="parties" className="gap-2">
+              <Tv className="h-4 w-4" /> Watch Parties
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="content">
