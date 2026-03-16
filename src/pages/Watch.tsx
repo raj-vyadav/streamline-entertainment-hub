@@ -8,7 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useWatchlist } from "@/hooks/useWatchlist";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
-import { Play, Star, Clock, Calendar, Sparkles, Users, ThumbsUp, Share2, Plus, Check, Monitor, Smartphone, Tv } from "lucide-react";
+import { Play, Star, Clock, Calendar, Sparkles, Users, Share2, Plus, Check, Monitor, Smartphone, Tv } from "lucide-react";
+import ContentRating from "@/components/ContentRating";
+import WatchPartySchedule from "@/components/WatchPartySchedule";
 import { Button } from "@/components/ui/button";
 
 import nexusImg from "@/assets/nexus-chronicles.jpg";
