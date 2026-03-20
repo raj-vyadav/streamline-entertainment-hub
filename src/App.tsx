@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Browse from "./pages/Browse";
 import Watch from "./pages/Watch";
+import WatchParty from "./pages/WatchParty";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
@@ -25,6 +26,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/browse" element={<Browse />} />
             <Route path="/watch/:id" element={<Watch />} />
+            <Route path="/party/:partyId" element={<WatchParty />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/admin" element={<Admin />} />

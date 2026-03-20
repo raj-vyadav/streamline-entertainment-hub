@@ -186,6 +186,7 @@ export type Database = {
           created_at: string
           created_by: string
           id: string
+          party_type: string
           scheduled_at: string
           status: string
           title: string
@@ -195,6 +196,7 @@ export type Database = {
           created_at?: string
           created_by: string
           id?: string
+          party_type?: string
           scheduled_at: string
           status?: string
           title: string
@@ -204,6 +206,7 @@ export type Database = {
           created_at?: string
           created_by?: string
           id?: string
+          party_type?: string
           scheduled_at?: string
           status?: string
           title?: string
@@ -214,6 +217,35 @@ export type Database = {
             columns: ["content_id"]
             isOneToOne: false
             referencedRelation: "content"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      watch_party_members: {
+        Row: {
+          id: string
+          joined_at: string
+          party_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string
+          party_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string
+          party_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "watch_party_members_party_id_fkey"
+            columns: ["party_id"]
+            isOneToOne: false
+            referencedRelation: "watch_parties"
             referencedColumns: ["id"]
           },
         ]
