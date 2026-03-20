@@ -26,6 +26,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/browse" element={<Browse />} />
             <Route path="/watch/:id" element={<Watch />} />
+            <Route path="/party/:partyId" element={<WatchParty />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/admin" element={<Admin />} />
