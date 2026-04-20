@@ -20,6 +20,7 @@ export type Database = {
           created_at: string
           id: string
           message: string
+          party_id: string | null
           user_id: string
         }
         Insert: {
@@ -27,6 +28,7 @@ export type Database = {
           created_at?: string
           id?: string
           message: string
+          party_id?: string | null
           user_id: string
         }
         Update: {
@@ -34,6 +36,7 @@ export type Database = {
           created_at?: string
           id?: string
           message?: string
+          party_id?: string | null
           user_id?: string
         }
         Relationships: [
@@ -42,6 +45,13 @@ export type Database = {
             columns: ["content_id"]
             isOneToOne: false
             referencedRelation: "content"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_messages_party_id_fkey"
+            columns: ["party_id"]
+            isOneToOne: false
+            referencedRelation: "watch_parties"
             referencedColumns: ["id"]
           },
         ]
