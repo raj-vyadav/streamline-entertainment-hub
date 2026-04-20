@@ -215,7 +215,7 @@ const WatchParty = () => {
                 <Users className="h-5 w-5 text-primary" />
                 <h3 className="font-display font-semibold text-foreground">Live Chat</h3>
               </div>
-              <SocialChat contentId={party.content_id} />
+              <SocialChat partyId={party.id} contentId={party.content_id} partyStatus={party.status} />
             </motion.div>
           </div>
         </div>
