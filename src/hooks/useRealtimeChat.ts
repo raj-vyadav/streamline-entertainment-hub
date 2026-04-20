@@ -12,10 +12,11 @@ export interface ChatMsg {
 
 interface UseRealtimeChatOptions {
   partyId?: string;
+  contentId?: string;
   partyStatus?: string; // 'scheduled' | 'live' | 'ended'
 }
 
-export const useRealtimeChat = ({ partyId, partyStatus }: UseRealtimeChatOptions) => {
+export const useRealtimeChat = ({ partyId, contentId, partyStatus }: UseRealtimeChatOptions) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [loading, setLoading] = useState(true);
@@ -74,7 +75,6 @@ export const useRealtimeChat = ({ partyId, partyStatus }: UseRealtimeChatOptions
 
     fetchMessages();
 
-    // Only subscribe to realtime updates while the party is live
     if (!isLive) {
       return () => { active = false; };
     }
@@ -116,7 +116,7 @@ export const useRealtimeChat = ({ partyId, partyStatus }: UseRealtimeChatOptions
   }, [partyId, isLive]);
 
   const sendMessage = async (message: string) => {
-    if (!user || !partyId || !message.trim()) return;
+    if (!user || !partyId || !contentId || !message.trim()) return;
     if (!isLive) {
       console.warn("Cannot send: party is not live");
       return;
@@ -124,11 +124,9 @@ export const useRealtimeChat = ({ partyId, partyStatus }: UseRealtimeChatOptions
     const { error } = await supabase.from("chat_messages").insert({
       user_id: user.id,
       party_id: partyId,
-      // content_id is still required by schema; pass empty UUID via separate fetch is unnecessary
-      // We need content_id since column is NOT NULL. Caller passes via separate hook? Simplest: also accept it.
-      content_id: partyId, // placeholder; will be overridden below if provided differently
+      content_id: contentId,
       message: message.trim(),
-    } as any);
+    });
     if (error) console.error("Failed to send message:", error);
   };
 
