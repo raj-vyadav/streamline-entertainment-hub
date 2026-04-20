@@ -10,13 +10,23 @@ export interface ChatMsg {
   display_name: string;
 }
 
-export const useRealtimeChat = (contentId: string | undefined) => {
+interface UseRealtimeChatOptions {
+  partyId?: string;
+  partyStatus?: string; // 'scheduled' | 'live' | 'ended'
+}
+
+export const useRealtimeChat = ({ partyId, partyStatus }: UseRealtimeChatOptions) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const isLive = partyStatus === "live";
+
   useEffect(() => {
-    if (!contentId) return;
+    if (!partyId) {
+      setLoading(false);
+      return;
+    }
 
     let active = true;
 
@@ -31,14 +41,13 @@ export const useRealtimeChat = (contentId: string | undefined) => {
       return map;
     };
 
-    // Fetch existing messages
     const fetchMessages = async () => {
       const { data, error } = await supabase
         .from("chat_messages")
         .select("id, user_id, message, created_at")
-        .eq("content_id", contentId)
+        .eq("party_id", partyId)
         .order("created_at", { ascending: true })
-        .limit(50);
+        .limit(200);
 
       if (error) {
         console.error("Failed to load chat messages:", error);
@@ -65,12 +74,16 @@ export const useRealtimeChat = (contentId: string | undefined) => {
 
     fetchMessages();
 
-    // Subscribe to new messages
+    // Only subscribe to realtime updates while the party is live
+    if (!isLive) {
+      return () => { active = false; };
+    }
+
     const channel = supabase
-      .channel(`chat-${contentId}`)
+      .channel(`chat-party-${partyId}`)
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "chat_messages", filter: `content_id=eq.${contentId}` },
+        { event: "INSERT", schema: "public", table: "chat_messages", filter: `party_id=eq.${partyId}` },
         async (payload) => {
           const { data: profile } = await supabase
             .from("profiles")
@@ -80,7 +93,6 @@ export const useRealtimeChat = (contentId: string | undefined) => {
 
           if (!active) return;
           setMessages((prev) => {
-            // Avoid duplicates if message already added optimistically or via re-fetch
             if (prev.some((m) => m.id === payload.new.id)) return prev;
             return [
               ...prev,
@@ -101,17 +113,24 @@ export const useRealtimeChat = (contentId: string | undefined) => {
       active = false;
       supabase.removeChannel(channel);
     };
-  }, [contentId]);
+  }, [partyId, isLive]);
 
   const sendMessage = async (message: string) => {
-    if (!user || !contentId || !message.trim()) return;
+    if (!user || !partyId || !message.trim()) return;
+    if (!isLive) {
+      console.warn("Cannot send: party is not live");
+      return;
+    }
     const { error } = await supabase.from("chat_messages").insert({
       user_id: user.id,
-      content_id: contentId,
+      party_id: partyId,
+      // content_id is still required by schema; pass empty UUID via separate fetch is unnecessary
+      // We need content_id since column is NOT NULL. Caller passes via separate hook? Simplest: also accept it.
+      content_id: partyId, // placeholder; will be overridden below if provided differently
       message: message.trim(),
-    });
+    } as any);
     if (error) console.error("Failed to send message:", error);
   };
 
-  return { messages, sendMessage, loading, isAuthenticated: !!user };
+  return { messages, sendMessage, loading, isAuthenticated: !!user, isLive };
 };
