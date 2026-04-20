@@ -70,7 +70,19 @@ const Navbar = () => {
               <Link to="/profile" className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
                 <User className="h-5 w-5" />
               </Link>
-              <button onClick={handleSignOut} className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
+              <button
+                onClick={handleSignOut}
+                className="hidden md:inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary hover:bg-destructive/10 transition-colors text-sm font-medium text-foreground hover:text-destructive"
+                title="Log out"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Log out</span>
+              </button>
+              <button
+                onClick={handleSignOut}
+                className="md:hidden p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-destructive"
+                title="Log out"
+              >
                 <LogOut className="h-5 w-5" />
               </button>
             </>
@@ -108,10 +120,18 @@ const Navbar = () => {
                   {link.label}
                 </Link>
               ))}
-              {!user && (
+              {!user ? (
                 <Link to="/auth" onClick={() => setMobileOpen(false)} className="text-sm font-medium py-2 px-3 rounded-lg text-primary">
                   Sign In
                 </Link>
+              ) : (
+                <button
+                  onClick={() => { setMobileOpen(false); handleSignOut(); }}
+                  className="flex items-center gap-2 text-sm font-medium py-2 px-3 rounded-lg text-destructive hover:bg-secondary text-left"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Log out
+                </button>
               )}
             </div>
           </motion.div>
