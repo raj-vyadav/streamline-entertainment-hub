@@ -80,11 +80,14 @@ export const useRealtimeChat = ({ partyId, contentId, partyStatus }: UseRealtime
     }
 
     const channel = supabase
-      .channel(`chat-party-${partyId}`)
+      .channel(`chat-party-${partyId}-${Date.now()}`)
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "chat_messages", filter: `party_id=eq.${partyId}` },
+        { event: "INSERT", schema: "public", table: "chat_messages" },
         async (payload) => {
+          // Client-side filter (server filter can be flaky on Realtime)
+          if (payload.new.party_id !== partyId) return;
+
           const { data: profile } = await supabase
             .from("profiles")
             .select("display_name")
@@ -107,7 +110,9 @@ export const useRealtimeChat = ({ partyId, contentId, partyStatus }: UseRealtime
           });
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log(`[chat realtime] party=${partyId} status=${status}`);
+      });
 
     return () => {
       active = false;
